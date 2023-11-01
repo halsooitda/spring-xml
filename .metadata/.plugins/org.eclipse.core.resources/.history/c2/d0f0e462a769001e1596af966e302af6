@@ -1,0 +1,79 @@
+package com.ezen.myProject.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.ezen.myProject.domain.BoardDTO;
+import com.ezen.myProject.domain.BoardVO;
+import com.ezen.myProject.domain.PagingVO;
+import com.ezen.myProject.repository.BoardDAO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class BoardServiceImpl implements BoardService {
+	@Inject
+	private BoardDAO bdao;
+
+	@Override
+	public int register(BoardDTO bdto) {
+		log.info("register check2");
+		//기존 게시글에 대한 내용을 DB에 저장. 같은 내용을 저장
+		int isOk = bdao.insert(bdto.getBvo());
+		//------파일 저장 라인
+		if(bdto.getFlist()==null) {
+			//파일의 값이 null이면 저장 없음. -> 그냥 성공한 걸로
+			isOk *= 1; //둘다 성공해야 1이 감
+		}else {
+			//bvo의 값이 들어가고, 파일의 개수가 있다면
+			if(isOk > 0 && bdto.getFlist().size() > 0) {
+				//fvo의 bno는 아직 설정되기 전
+				//현재 시점에서 bno는 아직 결정되지 않음. -> DB insert시 자동생성 auto_increment
+				int bno = bdao.selectBno();
+			}
+		}
+		
+		return isOk;
+	}
+
+	@Override
+	public List<BoardVO> getList(PagingVO pgvo) {
+		log.info("list check2");
+		return bdao.getList(pgvo);
+	}
+
+	@Override
+	public BoardVO getDetail(int bno) {
+		int cnt = 1;
+		bdao.readCount(bno, cnt);
+		return bdao.getDetail(bno);
+	}
+
+//	@Override
+//	public int readCount(int bno) {
+//		return bdao.readCount(bno);
+//	}
+
+	@Override
+	public int modify(BoardVO bvo) {
+		//수정할 때 들어가는 부당 read_count 2개 빼주기
+		//read_count -2
+		int cnt = -2;
+		bdao.readCount(bvo.getBno(), cnt);
+		return bdao.modify(bvo);
+	}
+
+	@Override
+	public int remove(int bno) {
+		return bdao.delete(bno);
+	}
+
+	@Override
+	public int getTotalCount(PagingVO pgvo) {
+		return bdao.getTotalCount(pgvo);
+	}
+}

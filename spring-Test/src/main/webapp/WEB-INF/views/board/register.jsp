@@ -1,0 +1,39 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="../layout/header.jsp"></jsp:include>
+<h2> 게시글 등록 </h2>
+<!-- mapping 상태는 get / post가 별도의 mapping을 가짐 -->
+<form action="/board/register" method="post" enctype="multipart/form-data">
+	title : <input type="text" name="title"> <br>
+	writer : <input type="text" name="writer" value="${ses.id }" readonly="readonly"> <br>
+	content : <textarea rows="5" cols="50" name="content"></textarea> <br>
+	file : <input type="file" id="file" name="files" multiple="multiple" style="display:none"> 
+							 <!-- multiple:한번에 여러개의 파일을 등록할 때 사용 -->
+	<button type="button" id="trigger">FileUpload</button> <br>
+	<!-- FileUpload 누르면 파일선택을 누른 것과 같은 효과를 냈으면 함. -->
+	<div id="fileZone">
+		<!-- 어떤 파일을 선택했는지 차례대로 뜨도록 하는 공간 -->
+		
+	</div>
+	<button type="submit" id="regBtn">등록</button>
+</form>
+<br>
+<a href="/">
+	<button type="button">Home</button>
+</a>
+<a href="/board/list">
+	<button type="button">List</button>
+</a>
+
+<script type="text/javascript" src="/resources/js/boardRegister.js"></script>
+<jsp:include page="../layout/footer.jsp"></jsp:include>
+</body>
+</html>

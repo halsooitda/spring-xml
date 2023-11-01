@@ -1,0 +1,84 @@
+console.log(bnoVal);
+
+//1
+async function postCommentToServer(cmtData){
+    try{
+        const url = "/comment/post";
+        const config = {
+            method : "post",
+            headers : {
+                'content-type' : 'application/json; charset=utf-8'
+            },
+            body : JSON.stringify(cmtData)
+        };
+
+        const resp = await fetch(url, config);
+        const result = await resp.text(); //isOk
+        return result;
+
+    }catch(err){
+        console.log(err);
+    }
+}
+
+//2
+document.getElementById('cmtPostBtn').addEventListener('click',()=>{
+    const cmtText = document.getElementById('cmtText').value;
+    const cmtWriter = document.getElementById('cmtWriter').innerText; //span안에 있는 값을 가져올 때
+    if(cmtText == "" || cmtText == null){
+        alert("댓글을 입력해주세요.");
+        document.getElementById('cmtText').focus();
+        return false;
+    }else {
+        let cmtData = {
+            bno : bnoVal,
+            writer : cmtWriter,
+            content : cmtText
+        };
+        console.log(cmtData);
+        postCommentToServer(cmtData).then(result => {
+            console.log(result);
+            //isOk 확인
+            if(result == 1){
+                alert("댓글 등록 성공");
+                //화면에 뿌리기
+                //5
+                getCommentList(bnoVal);
+            }
+        })
+    }
+})
+
+//3
+async function spreadCommentListFromServer(bno){
+    try{
+        const resp = await fetch('/comment/'+bno);
+        const result = await resp.json();
+        return result;
+
+    }catch(err){
+        console.log(err);
+    }
+}
+
+//4
+function getCommentList(bno){
+    spreadCommentListFromServer(bno).then(result => {
+        console.log(result);
+        //화면에 뿌리기
+        let ul = document.getElementById("cmtListArea");
+        ul.innerHTML = "";
+        for(let i=0; i<result.length; i++){
+            let str = `<li>`;
+            str += `<div>`;
+            str += `<div>${result[i].writer}</div>`;
+            str += `${result[i].content}`;
+            str += `</div>`;
+            str += `<span>${result[i].reg_date}</span>`;
+            str = `</li>`;
+            
+            ul.innerHTML += str;
+        }
+
+    })
+}

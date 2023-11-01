@@ -1,0 +1,33 @@
+package com.ezen.myProject.handler;
+
+import com.ezen.myProject.domain.PagingVO;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString
+@Setter
+@Getter
+public class PagingHandler {
+	
+	private int startPage;
+	private int endPage;
+	private boolean prev, next;
+	private int totalCount;
+	private PagingVO pgvo;
+	
+	public PagingHandler(PagingVO pgvo, int totalCount) {
+		this.pgvo = pgvo;
+		this.totalCount = totalCount;
+		// 1, 2, 3 ... 10 => 10 / pageNo 1~10까지는 endPage가 10
+		// 11, 12  ... 20 => 20 / pageNo 11~20까지는 endPage가 20
+		this.endPage = 
+				
+				
+				
+	}
+	
+	
+	
+}

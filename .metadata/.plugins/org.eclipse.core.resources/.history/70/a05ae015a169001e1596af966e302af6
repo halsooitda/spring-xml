@@ -1,0 +1,104 @@
+package com.ezen.myProject.handler;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.tika.Tika;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ezen.myProject.domain.FileVO;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@AllArgsConstructor
+@Component //파일을 여러개 처리하는 내가 만든 객체 <-> 이미 만들어진 것들은 bean
+public class FileHandler {
+	
+	//내 파일 기본 경로 설정 
+	private final String UP_DIR = "D:\\_myweb\\_java\\fileupload";
+	
+	public List<FileVO> uploadFiles(MultipartFile[] files){
+		//멀티파트 파일 객체를 받아서 FileVO 형태로 저장한 후
+		//오늘 날짜 경로(가변형태로 생성) / 실제 파일을 해당 경로에 저장
+		//FileVO를 List에 추가 => List를 리턴
+		
+		//오늘 날짜 경로 생성
+		LocalDate date = LocalDate.now();
+		log.info(">>> date : "+date);
+		String today = date.toString(); //2023-10-13 String으로 변환
+		// 2023\\10\\13 String 생성
+		today = today.replace("-", File.separator);
+				
+		//오늘 날짜(today)의 폴더 구성
+		File folders = new File(UP_DIR, today); //D:\\_myweb\\_java\\fileupload\\2023\\10\\13
+		if(!folders.exists()) { //없다면 (있으면true)
+			folders.mkdirs(); //폴더 생성 명령
+		}
+		
+		//리스트 설정
+		List<FileVO> flist = new ArrayList<FileVO>();
+		//여러개의 파일들 중 순서대로 하나의 파일 가져오기
+		for(MultipartFile file : files) {
+			FileVO fvo = new FileVO();
+			fvo.setSave_dir(today); //공통(D:\\_myweb\\_java\\fileupload) 뒤쪽에 오늘날짜 경로(2023\\10\\13)만 set
+			fvo.setFile_size(file.getSize()); //파일 사이즈는 return이 Long임 그러므로 FileVO설정시 size는 long으로 생성
+			
+			//파일 이름 설정(OriginalFilename() 설정)
+			//originalFilename : 파일 경로를 포함하고 있을 수 있음.
+			log.info(">>>>> getName : "+file.getName()); //파일객체의 종류 > files
+			log.info(">>>>> oriName : "+file.getOriginalFilename()); //실제 파일명
+			String originalFileName = file.getOriginalFilename();
+			String onlyFileName = originalFileName.substring(
+					originalFileName.lastIndexOf(File.separator)+1); //실제 파일명만 추출
+			log.info(">>> onlyFileName : "+onlyFileName);
+			fvo.setFile_name(onlyFileName); //파일 이름 설정
+			
+			//UUID 생성
+			UUID uuid = UUID.randomUUID();
+			//uuid는 UUID의 객체이므로 toString으로 변경 후 저장
+			log.info(">>>>> uuid : "+uuid.toString());
+			fvo.setUuid(uuid.toString()); 
+			// <--------- 여기까지 fvo 설정 완료 fvo setting ----------->
+			
+			//디스크에 저장할 파일 객체 생성 -> 저장
+			//uuid_파일네임
+			String fullFileName = uuid.toString()+"_"+onlyFileName;
+			//저장파일
+			File storeFile = new File(folders, fullFileName); //D:~ + uuid + 실제 파일명
+			
+			//저장 => 폴더가 없으면 저장이 안되기 때문에 io Exception 발생
+			try {
+				file.transferTo(storeFile); //원본 객체를 저장을 위한 형태로 변경 후 복사
+				//파일 타입을 결정
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+		return flist;
+	}
+	
+	//tika를 사용하여 파일 형식 체크 -> 이미지 파일이 맞는지 확인
+	public boolean isImageFile(File storeFile) throws IOException {
+		String mimeType = new Tika().detect(storeFile); 
+		return mimeType.startsWith("image")? true : false;
+	}
+	
+	
+	
+	
+	
+	
+	
+}

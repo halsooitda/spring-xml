@@ -1,0 +1,29 @@
+package com.ezen.myProject.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ezen.myProject.service.CommentService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RequestMapping("/comment/*")
+@RestController
+@Slf4j
+public class CommentController {
+	
+	@Inject
+	private CommentService csv;
+	
+	//ResponseEntity 객체 사용
+	//@RequestBody : body값 추출 
+						//내보낼 값의 형태
+	public ResponseEntity<String> post(){
+		
+	}
+	
+	
+}

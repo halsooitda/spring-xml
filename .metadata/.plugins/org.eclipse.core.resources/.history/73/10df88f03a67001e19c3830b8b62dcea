@@ -1,0 +1,21 @@
+package com.ezen.myProject.handler;
+
+import com.ezen.myProject.domain.PagingVO;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString
+@Setter
+@Getter
+public class PagingHandler {
+	
+	private int startPage;
+	private int endPage;
+	private boolean prev, next;
+	private int totalCount;
+	private PagingVO pgvo;
+	
+	
+}

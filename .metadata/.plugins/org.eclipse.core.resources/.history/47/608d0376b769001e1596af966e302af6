@@ -1,0 +1,9 @@
+package com.ezen.myProject.repository;
+
+import com.ezen.myProject.domain.FileVO;
+
+public interface FileDAO {
+
+	int insertFile(FileVO fvo);
+
+}

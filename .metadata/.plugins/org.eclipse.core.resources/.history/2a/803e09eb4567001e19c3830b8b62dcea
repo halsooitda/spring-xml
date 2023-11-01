@@ -1,0 +1,58 @@
+package com.ezen.myProject.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.ezen.myProject.domain.BoardVO;
+import com.ezen.myProject.domain.PagingVO;
+import com.ezen.myProject.repository.BoardDAO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class BoardServiceImpl implements BoardService {
+	@Inject
+	private BoardDAO bdao;
+
+	@Override
+	public int register(BoardVO bvo) {
+		log.info("register check2");
+		return bdao.insert(bvo);
+	}
+
+	@Override
+	public List<BoardVO> getList(PagingVO pgvo) {
+		log.info("list check2");
+		return bdao.getList(pgvo);
+	}
+
+	@Override
+	public BoardVO getDetail(int bno) {
+		int cnt = 1;
+		bdao.readCount(bno, cnt);
+		return bdao.getDetail(bno);
+	}
+
+//	@Override
+//	public int readCount(int bno) {
+//		return bdao.readCount(bno);
+//	}
+
+	@Override
+	public int modify(BoardVO bvo) {
+		//수정할 때 들어가는 부당 read_count 2개 빼주기
+		//read_count -2
+		int cnt = -2;
+		bdao.readCount(bvo.getBno(), cnt);
+		return bdao.modify(bvo);
+	}
+
+	@Override
+	public int remove(int bno) {
+		return bdao.delete(bno);
+	}
+}

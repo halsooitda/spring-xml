@@ -1,0 +1,30 @@
+package com.ezen.myProject.repository;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ezen.myProject.domain.BoardDTO;
+import com.ezen.myProject.domain.BoardVO;
+import com.ezen.myProject.domain.PagingVO;
+
+public interface BoardDAO {
+
+	int insert(BoardVO bvo); //메서드명이 id임
+
+	List<BoardVO> getList(PagingVO pgvo);
+
+	BoardVO getDetail(int bno);
+
+//	int readCount(int bno);
+	void readCount(@Param("bno")int bno, @Param("cnt")int cnt); //파라미터를 두개 달고갈 수 있도록 param을 사용
+
+	int modify(BoardVO bvo);
+
+	int delete(int bno);
+
+	int getTotalCount(PagingVO pgvo);
+
+
+
+}
